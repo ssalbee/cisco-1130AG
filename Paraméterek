@@ -1,0 +1,10 @@
+1 Minden AP SSID-ja PALWIFY
+2 Minden AP oszt DHCP, 1-200
+3 AP fix IP kapnak: 2. emelet 192.168.202.254
+                    1. emelet 192.168.201.254
+                    földszint 192.168.200.254
+                    aula      192.168.203.254
+                    gataway:10.0.0.200
+                    DNS1:   8.8.8.8
+4 Ha lehet ne legyen címbérlet, ha van akkor max 1órás lehet csak
+5 rádiók frekvenciája, mindig legyen távoli a közelben lévő AP-től. pl.: 2. emelet 11 csat, 1. emelet akkor 2 csat. stb.
