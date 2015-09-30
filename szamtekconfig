@@ -1,0 +1,137 @@
+
+!
+version 12.4
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname szamtek
+!
+enable secret 5 $1$9e/6$n/WQvVvX6fhiG2ayMRaXK1
+!
+aaa new-model
+!
+!
+aaa group server radius rad_eap
+ server 10.168.212.254 auth-port 1812 acct-port 1813
+!
+aaa group server radius rad_mac
+!
+aaa group server radius rad_acct
+ server 10.168.212.254 auth-port 1812 acct-port 1813
+!
+aaa group server radius rad_admin
+!
+aaa group server tacacs+ tac_admin
+!
+aaa group server radius rad_pmip
+!
+aaa group server radius dummy
+!
+aaa group server radius rad_eap1
+ server 10.168.212.254 auth-port 1812 acct-port 1813
+!
+aaa group server radius rad_acct1
+ server 10.168.212.254 auth-port 1812 acct-port 1813
+!
+aaa authentication login eap_methods group rad_eap
+aaa authentication login mac_methods local
+aaa authentication login eap_methods1 group rad_eap1
+aaa authorization exec default local 
+aaa accounting network acct_methods start-stop group rad_acct
+aaa accounting network acct_methods1 start-stop group rad_acct1
+!
+aaa session-id common
+ip domain name szamtek
+!
+!
+!
+dot11 ssid Palwify
+   authentication open eap eap_methods1 
+   authentication key-management wpa version 2
+   accounting acct_methods1
+   guest-mode
+!
+power inline negotiation prestandard source
+!
+!
+username Cisco password 7 1404071B09163E39252523
+!
+bridge irb
+!
+!
+interface Dot11Radio0
+ no ip address
+ no ip route-cache
+ !
+ encryption mode ciphers aes-ccm 
+ !
+ ssid Palwify
+ !
+ speed  basic-1.0 basic-2.0 basic-5.5 basic-11.0 basic-6.0 basic-9.0 basic-12.0 basic-18.0 basic-24.0 basic-36.0 basic-48.0 basic-54.0
+ station-role root
+ world-mode dot11d country HU both
+ bridge-group 1
+ bridge-group 1 subscriber-loop-control
+ bridge-group 1 block-unknown-source
+ no bridge-group 1 source-learning
+ no bridge-group 1 unicast-flooding
+ bridge-group 1 spanning-disabled
+!
+interface Dot11Radio1
+ no ip address
+ no ip route-cache
+ !
+ encryption mode ciphers aes-ccm 
+ !
+ ssid Palwify
+ !
+ no dfs band block
+ speed  basic-6.0 basic-9.0 basic-12.0 basic-18.0 basic-24.0 basic-36.0 basic-48.0 basic-54.0
+ channel dfs
+ station-role root
+ world-mode dot11d country HU both
+ bridge-group 1
+ bridge-group 1 subscriber-loop-control
+ bridge-group 1 block-unknown-source
+ no bridge-group 1 source-learning
+ no bridge-group 1 unicast-flooding
+ bridge-group 1 spanning-disabled
+!
+interface FastEthernet0
+ ip address 10.168.102.254 255.0.0.0
+ no ip route-cache
+ duplex auto
+ speed auto
+ bridge-group 1
+ no bridge-group 1 source-learning
+ bridge-group 1 spanning-disabled
+!
+interface BVI1
+ ip address 10.168.102.254 255.0.0.0
+ no ip route-cache
+!
+ip default-gateway 10.0.0.200
+ip http server
+no ip http secure-server
+ip http help-path http://www.cisco.com/warp/public/779/smbiz/prodconfig/help/eag
+ip radius source-interface BVI1 
+access-list 111 permit tcp any any neq telnet
+radius-server attribute 32 include-in-access-req format %h
+radius-server host 10.168.212.254 auth-port 1812 acct-port 1813 key 7 140713071B0D2C321B3C3A212D18
+radius-server vsa send accounting
+bridge 1 route ip
+!
+!
+!
+line con 0
+ access-class 111 in
+line vty 0 4
+ access-class 111 in
+ transport input ssh
+!
+sntp server 10.168.212.254
+sntp broadcast client
+end
+
